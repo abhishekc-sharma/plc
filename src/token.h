@@ -7,6 +7,7 @@ typedef enum {
   T_LPAREN,
   T_RPAREN,
   T_IDENTIFIER,
+  T_EOF
 } token_type_t;
 
 typedef struct {
