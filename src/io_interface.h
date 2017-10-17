@@ -1,5 +1,5 @@
-#ifndef __IO_INTERFACE_H
-#define __IO_INTERFACE_H
+#ifndef PLC_IO_INTERFACE_H
+#define PLC_IO_INTERFACE_H
 
 #include <stdio.h>
 

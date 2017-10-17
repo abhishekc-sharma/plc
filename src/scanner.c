@@ -95,7 +95,6 @@ void read_identifier(scanner_t *scanner, io_interface_t *io_interface, char **id
 
   *idptr = (char *) malloc((size + 1) * sizeof(char));
   int i = 0;
-  char c;
   while(isalpha(io_interface_peekchar(io_interface))) {
     if(i >= size) {
       size *= 2;

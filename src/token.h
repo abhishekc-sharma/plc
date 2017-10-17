@@ -1,5 +1,5 @@
-#ifndef __TOKEN_H
-#define __TOKEN_H
+#ifndef PLC_TOKEN_H
+#define PLC_TOKEN_H
 
 typedef enum {
   T_BSLASH,

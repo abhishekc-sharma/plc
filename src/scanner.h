@@ -1,5 +1,5 @@
-#ifndef __SCANNER_H
-#define __SCANNER_H
+#ifndef PLC_SCANNER_H
+#define PLC_SCANNER_H
 
 #include "io_interface.h"
 #include "token.h"
