@@ -41,6 +41,8 @@ ast_t *parser_abstraction(parser_t *parser, io_interface_t *io_interface) {
 
   token_t *parameter_token = scanner_gettoken(parser->scanner, io_interface);
   if(parameter_token->type != T_IDENTIFIER) {
+    token_release(parameter_token);
+    token_release(bslash_token);
     return NULL;
   }
 
@@ -49,11 +51,19 @@ ast_t *parser_abstraction(parser_t *parser, io_interface_t *io_interface) {
 
   token_t *period_token = scanner_gettoken(parser->scanner, io_interface);
   if(period_token->type != T_PERIOD) {
+    token_release(period_token);
+    free(list_pophead(parser->context));
+    token_release(parameter_token);
+    token_release(bslash_token);
     return NULL;
   }
 
   ast_t *body_ast = parser_run(parser, io_interface);
   if(body_ast == NULL) {
+    token_release(period_token);
+    free(list_pophead(parser->context));
+    token_release(parameter_token);
+    token_release(bslash_token);
     return NULL;
   }
 
@@ -69,16 +79,22 @@ ast_t *parser_application(parser_t *parser, io_interface_t *io_interface) {
 
   ast_t *function_ast = parser_run(parser, io_interface);
   if(function_ast == NULL) {
+    token_release(lparen_token);
     return NULL;
   }
 
   ast_t *argument_ast = parser_run(parser, io_interface);
   if(argument_ast == NULL) {
+    token_release(lparen_token);
+    ast_release(function_ast);
     return NULL;
   }
 
   token_t *rparen_token = scanner_gettoken(parser->scanner, io_interface);
   if(rparen_token->type != T_RPAREN) {
+    token_release(lparen_token);
+    ast_release(function_ast);
+    ast_release(argument_ast);
     return NULL;
   }
 
@@ -99,6 +115,8 @@ ast_t *parser_variable(parser_t *parser, io_interface_t *io_interface) {
   }
 
   if(index == -1) {
+    list_iterator_release(iterator);
+    token_release(identifier_token);
     return NULL;
   }
 

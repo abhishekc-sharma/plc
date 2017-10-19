@@ -46,9 +46,6 @@ void *list_pophead(list_t *list) {
 }
 
 list_iterator_t *list_iterator_create(list_t *list) {
-  if(list->length == 0) {
-    return NULL;
-  }
 
   list_iterator_t *iterator = (list_iterator_t *) malloc(sizeof(list_iterator_t));
   iterator->list = list;
