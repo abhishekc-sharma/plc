@@ -33,25 +33,48 @@ ast_t *ast_create(ast_type_t type, ...) {
   return ast;
 }
 
-void ast_release(ast_t *ast) {
+void ast_release(ast_t *ast, ast_release_t release_type) {
   switch(ast->type) {
     case A_VARIABLE:
       free(ast);
       break;
     case A_ABSTRACTION:
-      ast_release(ast->children[0]);
+      release_type == R_EXCEPT_0 ? 0 : ast_release(ast->children[0], R_ALL);
       free(ast->children);
       free(ast);
       break;
     case A_APPLICATION:
-      ast_release(ast->children[0]);
-      ast_release(ast->children[1]);
+      release_type == R_EXCEPT_0 ? 0 : ast_release(ast->children[0], R_ALL);
+      release_type == R_EXCEPT_1 ? 0 : ast_release(ast->children[1], R_ALL);
       free(ast->children);
       free(ast);
       break;
     default:
       break;
   }
+}
+
+ast_t *ast_clone(ast_t *ast) {
+  ast_t *clone = NULL;
+  switch(ast->type) {
+    case A_VARIABLE:
+      ;
+      clone = ast_create(A_VARIABLE, ast->variable_index);
+      break;
+    case A_ABSTRACTION:
+      ;
+      ast_t *body_ast = ast_clone(ast->children[0]);
+      clone = ast_create(A_ABSTRACTION, body_ast);
+      break;
+    case A_APPLICATION:
+      ;
+      ast_t *function_ast = ast_clone(ast->children[0]);
+      ast_t *argument_ast = ast_clone(ast->children[1]);
+      clone = ast_create(A_APPLICATION, function_ast, argument_ast);
+      break;
+  }
+
+  return clone;
 }
 
 void print_indent(int level) {

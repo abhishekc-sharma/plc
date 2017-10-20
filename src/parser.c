@@ -86,15 +86,15 @@ ast_t *parser_application(parser_t *parser, io_interface_t *io_interface) {
   ast_t *argument_ast = parser_run(parser, io_interface);
   if(argument_ast == NULL) {
     token_release(lparen_token);
-    ast_release(function_ast);
+    ast_release(function_ast, R_ALL);
     return NULL;
   }
 
   token_t *rparen_token = scanner_gettoken(parser->scanner, io_interface);
   if(rparen_token->type != T_RPAREN) {
     token_release(lparen_token);
-    ast_release(function_ast);
-    ast_release(argument_ast);
+    ast_release(function_ast, R_ALL);
+    ast_release(argument_ast, R_ALL);
     return NULL;
   }
 

@@ -1,4 +1,5 @@
 #include "ast.h"
+#include "evaluator.h"
 #include "io_interface.h"
 #include "parser.h"
 #include <stdio.h>
@@ -15,18 +16,28 @@ int main(int argc, char *argv[]) {
     ast_t *program = parser_run(parser, io_interface);
 
     if(program != NULL) {
-      ast_print(program);
+      evaluation_status_t status = evaluate(&program);
+      if(status == EV_FAILURE) {
+        printf("Error\n");
+        parser_release(parser);
+        ast_release(program, R_ALL);
+      } else {
+        ast_print(program);
+      }
     } else {
       printf("Error\n");
+      parser_release(parser);
+      io_interface_release(io_interface);
     }
 
-    ast_release(program);
+    ast_release(program, R_ALL);
     parser_release(parser);
     io_interface_release(io_interface);
     fclose(fp);
   } else {
     // REPL Mode
     io_interface_t *io_interface = io_interface_create(IO_REPL, stdin, stdout);
+    printf("Pure Lambda Calculus\n\n:q to Exit\n");
     while(1) {
       printf("> ");
       if(io_interface_peekchar(io_interface) == ':') {
@@ -45,7 +56,16 @@ int main(int argc, char *argv[]) {
       ast_t *program = parser_run(parser, io_interface);
 
       if(program != NULL) {
-        ast_print(program);
+        evaluation_status_t status = evaluate(&program);
+        if(status == EV_FAILURE) {
+          printf("Error\n");
+          io_interface_flush(io_interface);
+          parser_release(parser);
+          ast_release(program, R_ALL);
+          continue;
+        } else {
+          ast_print(program);
+        }
       } else {
         printf("Error\n");
         io_interface_flush(io_interface);
@@ -53,7 +73,7 @@ int main(int argc, char *argv[]) {
         continue;
       }
       io_interface_flush(io_interface);
-      ast_release(program);
+      ast_release(program, R_ALL);
       parser_release(parser);
     }
     io_interface_release(io_interface);
