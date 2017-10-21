@@ -1,3 +1,5 @@
+#define PLC_VERSION 0.1.0
+
 #include "ast.h"
 #include "evaluator.h"
 #include "io_interface.h"
@@ -37,9 +39,9 @@ int main(int argc, char *argv[]) {
   } else {
     // REPL Mode
     io_interface_t *io_interface = io_interface_create(IO_REPL, stdin, stdout);
-    printf("Pure Lambda Calculus\n\n:q to Exit\n");
+    printf("Pure Lambda Calculus - Type :q to Exit\n\n");
     while(1) {
-      printf("> ");
+      printf("plc> ");
       if(io_interface_peekchar(io_interface) == ':') {
         io_interface_getchar(io_interface);
         char c = io_interface_getchar(io_interface);
